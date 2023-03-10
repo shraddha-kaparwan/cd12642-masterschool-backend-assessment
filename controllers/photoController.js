@@ -37,3 +37,30 @@ export const getPhotoByIdRoute = async (req, res) => {
     }
 };
 
+export const getPhotoByUserRoute = async (req, res) => {
+    try {
+        const { username } = req.params;
+
+        const {data} = await axios.get(
+            `https://api.unsplash.com/users/${username}/photos`,
+            {
+                params: {
+                    client_id: `${access_key}`,
+                    per_page: `${per_page}`,
+                },
+            }
+        );
+
+        const photos =  data.map((photo) => ({
+            id: photo.id,
+            username: photo.user.username,
+            description: photo.description || 'No description provided.',
+            url: photo.urls.raw
+        }));
+
+        res.status(200).json(photos);
+    } catch(error) {
+        const {data} = error.response;
+        res.status(error.response.status).json({ message: data.message });
+    }
+}
