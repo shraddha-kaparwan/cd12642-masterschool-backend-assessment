@@ -15,15 +15,20 @@ export const protect = asyncHandler(async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.id).select("-password");
+      if (!user) {
+        res.status(401);
+        throw new Error("Unauthorized");
+      }
+      req.user = user;
       next();
     } catch (error) {
       console.log(error);
       res.status(401);
-      throw new Error("Not authorized");
+      throw new Error("Unauthorized");
     }
   }
   if (!token) {
     res.status(401);
-    throw new Error("Not authorized, No token");
+    throw new Error("Unauthorized, No token");
   }
 });

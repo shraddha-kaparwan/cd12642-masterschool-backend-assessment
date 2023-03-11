@@ -19,7 +19,7 @@ export const getFavoritePhoto = asyncHandler(async (req, res) => {
 export const addFavoritePhoto = asyncHandler(async (req, res) => {
   const { url, description, username, explaination } = req.body;
   const photo = await FavoritePhoto.create({
-    user: req.user.id,
+    user: "640c1019297b01e755bd55d2",
     username,
     url,
     description,

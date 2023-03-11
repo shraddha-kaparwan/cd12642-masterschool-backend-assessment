@@ -1,11 +1,13 @@
 import express from "express";
 const router = express.Router();
+
 import {
   getFavoritePhoto,
   addFavoritePhoto,
   editFavoritePhoto,
   deleteFavoritePhoto,
 } from "../controllers/favoritesController.js";
+
 import { protect } from "../middleware/authMiddleware.js";
 
 router

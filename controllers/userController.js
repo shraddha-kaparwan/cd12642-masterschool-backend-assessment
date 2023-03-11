@@ -53,43 +53,24 @@ export const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      const adminUser = await AdminUser.findOne({ email });
-      if (!adminUser) {
-        return res
-          .status(404)
-          .json({ message: "Incorrect email or password." });
-      } else {
-        const isMatch = await bcrypt.compare(password, adminUser.password);
-        if (!isMatch) {
-          return res
-            .status(401)
-            .json({ message: "Incorrect email or password." });
-        } else {
-          res.status(200).json({
-            message: "Admin user retrieved successfully",
-            _id: adminUser.id,
-            name: adminUser.name,
-            email: adminUser.email,
-            token: generateToken(adminUser.id),
-          });
-        }
-      }
-    } else {
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res
-          .status(401)
-          .json({ message: "Incorrect email or password." });
-      } else {
-        res.status(200).json({
-          message: "User retrieved successfully",
-          _id: user.id,
-          name: user.name,
-          email: user.email,
-          token: generateToken(user.id),
-        });
-      }
+      return res.status(401).json({ message: "Incorrect email." });
     }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect email or password." });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "10d",
+    });
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: token,
+    });
   } catch (error) {
     res.status(500).json({ message: "Invalid Credentials", error });
   }
@@ -125,6 +106,6 @@ export const getme = asyncHandler(async (req, res) => {
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
+    expiresIn: "10d",
   });
 };

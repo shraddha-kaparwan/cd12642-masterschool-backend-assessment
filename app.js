@@ -6,7 +6,7 @@ import photoRoutes from "./routes/photoRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import connectMongo from "./config/db.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
-import favoritesRoutes from "./routes/favoritesRoutes";
+import favoritesRoutes from "./routes/favoritesRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT;
