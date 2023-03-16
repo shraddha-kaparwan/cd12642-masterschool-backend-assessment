@@ -16,46 +16,39 @@ export const getFavoritePhoto = asyncHandler(async (req, res) => {
   res.json(photos);
 });
 
+// replaced hard-coded value with request params
 export const addFavoritePhoto = asyncHandler(async (req, res) => {
-  const { url, description, username, explaination } = req.body;
+  const { url, description, username, explanation } = req.body;
   const photo = await FavoritePhoto.create({
-    user: "640c1019297b01e755bd55d2",
+    user: req.user.id,
     username,
     url,
     description,
-    explaination,
+    explanation,
   });
   res.status(201).json(photo);
 });
 
+// removed the code that checks using id. Finding and updating the photo using just userId as stated in schema
 export const editFavoritePhoto = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { explaination } = req.body;
-  const photo = await FavoritePhoto.findById(id);
+  const { id } = req.user;
+  const { explanation } = req.body;
+  const photo = await FavoritePhoto.find({ user: id });
   if (!photo) {
     res.status(404).json({ message: "Photo not found" });
     return;
   }
-  if (photo.user.toString() !== req.user.id) {
-    res
-      .status(401)
-      .json({ message: "You do not have permission to edit this photo" });
-    return;
-  }
-  photo.explaination = explaination;
+  photo.explanation = explanation;
   await photo.save();
   res.json(photo);
 });
 
+// replaced the id to userId to find the photo and deleting it
 export const deleteFavoritePhoto = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const photo = await FavoritePhoto.findById(id);
+  const { id } = req.user;
+  const photo = await FavoritePhoto.find({ user: id });
   if (!photo) {
     res.status(404).json({ message: "Photo not found" });
-    return;
-  }
-  if (photo.user.toString() !== req.user.id) {
-    res.status(401).json({ message: "Unauthorized action!" });
     return;
   }
   await photo.remove();

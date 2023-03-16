@@ -4,6 +4,7 @@ import User from "../models/userModel.js";
 import dotenv from "dotenv";
 dotenv.config();
 
+// updated the code to get the returned value in const user
 export const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -14,7 +15,7 @@ export const protect = asyncHandler(async (req, res, next) => {
     try {
       token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select("-password");
+      const user = await User.findById(decoded.id).select("-password");
       if (!user) {
         res.status(401);
         throw new Error("Unauthorized");
@@ -22,7 +23,6 @@ export const protect = asyncHandler(async (req, res, next) => {
       req.user = user;
       next();
     } catch (error) {
-      console.log(error);
       res.status(401);
       throw new Error("Unauthorized");
     }

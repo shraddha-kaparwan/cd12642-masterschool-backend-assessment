@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+// corrected the spelling
 const favoritePhotoSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
@@ -20,7 +21,7 @@ const favoritePhotoSchema = new Schema({
     type: String,
     required: true,
   },
-  explaination: {
+  explanation: {
     type: String,
     required: true,
   },
